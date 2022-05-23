@@ -5,7 +5,7 @@ export const applyCustomCode = externalCodeSetup => {
     // externalCodeSetup.configApi.setAppSwitchEnabled(true);
     externalCodeSetup.navigationApi.replaceScreenComponent("SignupScreen", () => (
         <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-            <Text>This is my signup screen.</Text>
+            <Text>I have replaced my Sign Up Screen.</Text>
         </View>
     ));
 };
