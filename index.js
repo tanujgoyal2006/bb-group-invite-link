@@ -1,11 +1,15 @@
+// index.js
 import React from "react";
-import {View, Text} from "react-native";
+import {NativeModules, Text} from "react-native";
+import GroupItem from "./components/GroupItem";
+const {RNCustomCode} = NativeModules;
+ 
 export const applyCustomCode = externalCodeSetup => {
-    // call custom code api here
-    // externalCodeSetup.configApi.setAppSwitchEnabled(true);
-    externalCodeSetup.navigationApi.replaceScreenComponent("GroupScreen", () => (
-        <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-            <Text>This is my signup screen.</Text>
-        </View>
-    ));
+  externalCodeSetup.profileScreenHooksApi.setAfterProfileHeader(
+   props => {
+     console.log(props);
+     return <Text>showing user id after header, {props.user.id}</Text>
+   }); 
+   externalCodeSetup.profileScreenHooksApi.setCustomHeaderBackground('https://images.pexels.com/photos/167699/pexels-photo-167699.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+   externalCodeSetup.groupsListHooksApi.setGroupItemComponent(props => <GroupItem {...props} />)
 };
