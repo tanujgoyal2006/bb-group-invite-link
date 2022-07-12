@@ -1,15 +1,49 @@
-// index.js
 import React from "react";
-import {NativeModules, Text} from "react-native";
-import GroupItem from "./components/GroupItem";
-const {RNCustomCode} = NativeModules;
- 
-export const applyCustomCode = externalCodeSetup => {
-  externalCodeSetup.profileScreenHooksApi.setAfterProfileHeader(
-   props => {
-     console.log(props);
-     return <Text>showing user id after header, {props.user.id}</Text>
-   }); 
-   externalCodeSetup.profileScreenHooksApi.setCustomHeaderBackground('https://images.pexels.com/photos/167699/pexels-photo-167699.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
-   externalCodeSetup.groupsListHooksApi.setGroupItemComponent(props => <GroupItem {...props} />)
-};
+import {View, Text, Linking, StyleSheet, TouchableOpacity} from "react-native";
+import { withNavigation } from "react-navigation";
+import { useSelector } from "react-redux";
+import Clipboard from '@react-native-clipboard/clipboard';
+
+export const applyCustomCode = (externalCodeSetup) => {
+
+
+    const CustomAfterSearchInputComponent = withNavigation(props => {
+        
+        if (props.navigation.state.routeName === "SelectGroupMembers"){
+
+            const groupId = props.navigation.state.params.groupId;
+
+            if (groupId){
+                const group = useSelector(state => state.groupsCache.byId.get(groupId.toString()));
+                const [copiedText, setCopiedText] = useState('');
+                const copyToClipboard = () => {
+                    Clipboard.setString(group?.link);
+                };
+                
+                const fetchCopiedText = async () => {
+                    const text = await Clipboard.getString();
+                    setCopiedText(text);
+                };
+                return <View style={{marginBottom: 10}}>
+                    <TouchableOpacity onPress={copyToClipboard}>
+                        <Text 
+                            style={styles.hyperlinkStyle}
+                            onPress={() => {
+                            Linking.openURL(group?.link);
+                        }}>Copy Group Link</Text>
+                    </TouchableOpacity>
+                </View>
+            }
+
+        }
+
+        return null;
+
+    })
+    externalCodeSetup.searchScreenApiHooks.setAfterSearchInputComponent(CustomAfterSearchInputComponent)
+    const styles = StyleSheet.create({
+        hyperlinkStyle: {
+          color: 'blue',
+        }
+      });
+}
