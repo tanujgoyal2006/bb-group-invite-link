@@ -8,7 +8,6 @@ export const applyCustomCode = (externalCodeSetup) => {
 
 
     const CustomAfterSearchInputComponent = withNavigation(props => {
-        
         if (props.navigation.state.routeName === "SelectGroupMembers"){
 
             const groupId = props.navigation.state.params.groupId;
@@ -17,14 +16,13 @@ export const applyCustomCode = (externalCodeSetup) => {
                 const group = useSelector(state => state.groupsCache.byId.get(groupId.toString()));
                 const copyToClipboard = () => {
                     Clipboard.setString(group?.link);
+                    Linking.openURL(group?.link);
                   };
                 return <View style={{marginBottom: 10}}>
                         <TouchableOpacity onPress={copyToClipboard}>
                         <Text 
                             style={styles.hyperlinkStyle}
-                            onPress={() => {
-                            Linking.openURL(group?.link);
-                        }}>Click to copy group link and share!</Text>
+                            >Click to copy group link and share!</Text>
                         </TouchableOpacity>
                 </View>
             }
